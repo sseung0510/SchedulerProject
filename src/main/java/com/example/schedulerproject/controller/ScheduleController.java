@@ -2,11 +2,14 @@ package com.example.schedulerproject.controller;
 
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
 import com.example.schedulerproject.dto.response.CreateScheduleResponse;
+import com.example.schedulerproject.dto.response.GetScheduleResponse;
 import com.example.schedulerproject.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,5 +21,17 @@ public class ScheduleController {
     @PostMapping("/scheduler")
     public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request));
+    }
+
+    // lv2 - 전체 일정 조회(작성자명)
+    @GetMapping("/scheduler")
+    public ResponseEntity<List<GetScheduleResponse>> getAllSchedules(@RequestParam(required = false) String userName) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll(userName));
+    }
+
+    // lv2 - 선택 일정 조회(id)
+    @GetMapping("/scheduler/{scheduleId}")
+    public ResponseEntity<GetScheduleResponse> getSchedule(@PathVariable Long scheduleId) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.findOne(scheduleId));
     }
 }
