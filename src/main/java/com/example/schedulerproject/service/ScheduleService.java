@@ -2,8 +2,10 @@ package com.example.schedulerproject.service;
 
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
 import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
+import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
 import com.example.schedulerproject.dto.response.CreateScheduleResponse;
 import com.example.schedulerproject.dto.response.GetScheduleResponse;
+import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
 import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
 import com.example.schedulerproject.entity.Schedule;
 import com.example.schedulerproject.repository.ScheduleRepository;
