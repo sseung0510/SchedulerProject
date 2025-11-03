@@ -1,8 +1,10 @@
 package com.example.schedulerproject.service;
 
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
+import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
 import com.example.schedulerproject.dto.response.CreateScheduleResponse;
 import com.example.schedulerproject.dto.response.GetScheduleResponse;
+import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
 import com.example.schedulerproject.entity.Schedule;
 import com.example.schedulerproject.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +81,27 @@ public class ScheduleService {
                 schedule.getContent(),
                 schedule.getUserName(),
                 schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+    // lv3 - 일정 수정
+    @Transactional
+    public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
+        Schedule schedule = repository.findById(scheduleId).orElseThrow(
+                () -> new IllegalArgumentException("일정이 없습니다.")
+        );
+
+        if((schedule.getUserPwd()).equals(request.getUserPwd())) {
+            schedule.updateSchedule(request.getTitle(), request.getUserName());
+        } else {
+            new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return new UpdateScheduleResponse(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getUserName(),
                 schedule.getModifiedAt()
         );
     }
