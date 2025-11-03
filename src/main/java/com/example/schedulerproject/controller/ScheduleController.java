@@ -1,8 +1,10 @@
 package com.example.schedulerproject.controller;
 
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
+import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
 import com.example.schedulerproject.dto.response.CreateScheduleResponse;
 import com.example.schedulerproject.dto.response.GetScheduleResponse;
+import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
 import com.example.schedulerproject.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,5 +35,14 @@ public class ScheduleController {
     @GetMapping("/scheduler/{scheduleId}")
     public ResponseEntity<GetScheduleResponse> getSchedule(@PathVariable Long scheduleId) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findOne(scheduleId));
+    }
+
+    // lv3 - 일정 수정
+    @PutMapping("/scheduler/{scheduleId}")
+    public ResponseEntity<UpdateScheduleResponse> updateUpdateSchedule(
+            @PathVariable Long scheduleId,
+            @RequestBody UpdateScheduleRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.update(scheduleId, request));
     }
 }
