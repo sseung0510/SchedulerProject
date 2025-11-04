@@ -1,11 +1,10 @@
 package com.example.schedulerproject.service;
 
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
-import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
+import com.example.schedulerproject.dto.request.DeleteScheduleRequest;
 import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
 import com.example.schedulerproject.dto.response.CreateScheduleResponse;
 import com.example.schedulerproject.dto.response.GetScheduleResponse;
-import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
 import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
 import com.example.schedulerproject.entity.Schedule;
 import com.example.schedulerproject.repository.ScheduleRepository;
@@ -104,5 +103,17 @@ public class ScheduleService {
                 schedule.getUserName(),
                 schedule.getModifiedAt()
         );
+    }
+
+    // lv4 - 일정 삭제
+    @Transactional
+    public void delete(Long scheduleId, DeleteScheduleRequest request) {
+        Schedule schedule = repository.findById(scheduleId).orElseThrow(
+                () -> new IllegalArgumentException("일정이 없습니다.")
+        );
+
+        if((schedule.getUserPwd()).equals(request.getUserPwd())) {
+            repository.deleteById(scheduleId);
+        }
     }
 }

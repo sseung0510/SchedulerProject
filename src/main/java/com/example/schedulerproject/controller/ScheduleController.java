@@ -1,6 +1,7 @@
 package com.example.schedulerproject.controller;
 
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
+import com.example.schedulerproject.dto.request.DeleteScheduleRequest;
 import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
 import com.example.schedulerproject.dto.response.CreateScheduleResponse;
 import com.example.schedulerproject.dto.response.GetScheduleResponse;
@@ -39,10 +40,20 @@ public class ScheduleController {
 
     // lv3 - 일정 수정
     @PutMapping("/scheduler/{scheduleId}")
-    public ResponseEntity<UpdateScheduleResponse> updateUpdateSchedule(
+    public ResponseEntity<UpdateScheduleResponse> updateSchedule(
             @PathVariable Long scheduleId,
             @RequestBody UpdateScheduleRequest request
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(service.update(scheduleId, request));
+    }
+
+    // lv4 - 일정 삭제
+    @DeleteMapping("/scheduler/{scheduleId}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long scheduleId,
+            @RequestBody DeleteScheduleRequest request
+    ) {
+        service.delete(scheduleId, request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
