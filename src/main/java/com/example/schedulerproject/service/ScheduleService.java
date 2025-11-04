@@ -4,10 +4,7 @@ import com.example.schedulerproject.dto.request.CreateReplyRequest;
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
 import com.example.schedulerproject.dto.request.DeleteScheduleRequest;
 import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
-import com.example.schedulerproject.dto.response.CreateReplyResponse;
-import com.example.schedulerproject.dto.response.CreateScheduleResponse;
-import com.example.schedulerproject.dto.response.GetScheduleResponse;
-import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
+import com.example.schedulerproject.dto.response.*;
 import com.example.schedulerproject.entity.Reply;
 import com.example.schedulerproject.entity.Schedule;
 import com.example.schedulerproject.repository.ReplyRepository;
@@ -78,19 +75,36 @@ public class ScheduleService {
         return dtos.stream().sorted(Comparator.comparing(GetScheduleResponse::getModifiedAt).reversed()).collect(Collectors.toList());
     }
 
-    // lv2 - 일정 조회(id값)
+    // lv2 - 일정 조회(id값) + lv6 - 일정 단건 조회 업그레이드
     @Transactional(readOnly = true)
-    public GetScheduleResponse findOne(Long scheduleId) {
+    public GetScheduleReplyResponse findOne(Long scheduleId) {
+
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalArgumentException("일정이 없습니다.")
         );
-        return new GetScheduleResponse(
+
+        List<Reply> replies = replyRepository.findByScheduleId(scheduleId);
+
+        List<GetReplyResponse> dtos = new ArrayList<>();
+        for(Reply reply : replies) {
+            GetReplyResponse dto = new GetReplyResponse(
+                    reply.getReplyId(),
+                    reply.getReplyContent(),
+                    reply.getUserName(),
+                    reply.getCreatedAt(),
+                    reply.getModifiedAt()
+            );
+            dtos.add(dto);
+        }
+
+        return new GetScheduleReplyResponse(
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getUserName(),
                 schedule.getCreatedAt(),
-                schedule.getModifiedAt()
+                schedule.getModifiedAt(),
+                dtos
         );
     }
 
@@ -141,6 +155,7 @@ public class ScheduleService {
                 request.getUserName(),
                 request.getPassword()
         );
+
         reply.setSchedule(schedule);
 
         Reply saved = replyRepository.save(reply);

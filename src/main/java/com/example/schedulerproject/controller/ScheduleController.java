@@ -4,10 +4,7 @@ import com.example.schedulerproject.dto.request.CreateReplyRequest;
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
 import com.example.schedulerproject.dto.request.DeleteScheduleRequest;
 import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
-import com.example.schedulerproject.dto.response.CreateReplyResponse;
-import com.example.schedulerproject.dto.response.CreateScheduleResponse;
-import com.example.schedulerproject.dto.response.GetScheduleResponse;
-import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
+import com.example.schedulerproject.dto.response.*;
 import com.example.schedulerproject.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,9 +31,9 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll(userName));
     }
 
-    // lv2 - 선택 일정 조회(id)
+    // lv2 - 선택 일정 조회(id) + lv6 - 일정 단건 조회 업그레이드
     @GetMapping("/scheduler/{scheduleId}")
-    public ResponseEntity<GetScheduleResponse> getSchedule(@PathVariable Long scheduleId) {
+    public ResponseEntity<GetScheduleReplyResponse> getSchedule(@PathVariable Long scheduleId) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findOne(scheduleId));
     }
 
