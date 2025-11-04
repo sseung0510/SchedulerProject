@@ -1,16 +1,23 @@
 package com.example.schedulerproject.service;
 
+import com.example.schedulerproject.dto.request.CreateReplyRequest;
 import com.example.schedulerproject.dto.request.CreateScheduleRequest;
 import com.example.schedulerproject.dto.request.DeleteScheduleRequest;
 import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
+import com.example.schedulerproject.dto.response.CreateReplyResponse;
 import com.example.schedulerproject.dto.response.CreateScheduleResponse;
 import com.example.schedulerproject.dto.response.GetScheduleResponse;
 import com.example.schedulerproject.dto.response.UpdateScheduleResponse;
+import com.example.schedulerproject.entity.Reply;
 import com.example.schedulerproject.entity.Schedule;
+import com.example.schedulerproject.repository.ReplyRepository;
 import com.example.schedulerproject.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +28,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ScheduleService {
 
-    private final ScheduleRepository repository; // 레포지토리 호출
+    private final ScheduleRepository scheduleRepository; // 레포지토리 호출
+    private final ReplyRepository replyRepository;
 
     // lv1 - 일정 생성
     @Transactional
@@ -32,7 +40,7 @@ public class ScheduleService {
                 request.getUserName(),
                 request.getUserPwd()
         );
-        Schedule saved = repository.save(schedule);
+        Schedule saved = scheduleRepository.save(schedule);
         return new CreateScheduleResponse(
                 saved.getId(),
                 saved.getTitle(),
@@ -49,9 +57,9 @@ public class ScheduleService {
         List<Schedule> schedules;
 
         if(userName == null) {
-            schedules = repository.findAll();
+            schedules = scheduleRepository.findAll();
         } else {
-            schedules = repository.findByUserName(userName);
+            schedules = scheduleRepository.findByUserName(userName);
         }
 
         List<GetScheduleResponse> dtos = new ArrayList<>();
@@ -73,7 +81,7 @@ public class ScheduleService {
     // lv2 - 일정 조회(id값)
     @Transactional(readOnly = true)
     public GetScheduleResponse findOne(Long scheduleId) {
-        Schedule schedule = repository.findById(scheduleId).orElseThrow(
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalArgumentException("일정이 없습니다.")
         );
         return new GetScheduleResponse(
@@ -89,7 +97,7 @@ public class ScheduleService {
     // lv3 - 일정 수정
     @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
-        Schedule schedule = repository.findById(scheduleId).orElseThrow(
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalArgumentException("일정이 없습니다.")
         );
 
@@ -108,12 +116,40 @@ public class ScheduleService {
     // lv4 - 일정 삭제
     @Transactional
     public void delete(Long scheduleId, DeleteScheduleRequest request) {
-        Schedule schedule = repository.findById(scheduleId).orElseThrow(
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalArgumentException("일정이 없습니다.")
         );
 
         if((schedule.getUserPwd()).equals(request.getUserPwd())) {
-            repository.deleteById(scheduleId);
+            scheduleRepository.deleteById(scheduleId);
         }
+    }
+
+    // lv5 - 댓글 생성
+    @Transactional
+    public CreateReplyResponse saveReply(Long scheduleId, CreateReplyRequest request) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalArgumentException("일정이 없습니다.")
+        );
+
+        if(replyRepository.countByScheduleId(scheduleId) >= 10) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        Reply reply = new Reply(
+                request.getReplyContent(),
+                request.getUserName(),
+                request.getPassword()
+        );
+        reply.setSchedule(schedule);
+
+        Reply saved = replyRepository.save(reply);
+        return new CreateReplyResponse(
+                saved.getReplyId(),
+                saved.getReplyContent(),
+                saved.getUserName(),
+                saved.getCreatedAt(),
+                saved.getModifiedAt()
+        );
     }
 }
