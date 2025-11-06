@@ -4,37 +4,37 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "replies")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reply extends BaseEntity {
+public class Reply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long replyId;
 
-    @Column(nullable = false)
+    @Column(length = 100, nullable = false)
     private String replyContent;
 
     @Column(nullable = false)
     private String userName;
 
     @Column(nullable = false)
-    private String replyPwd;
+    private String password;
 
-    @ManyToOne // many = reply, one = schedule / 하나의 일정에 여러개의 댓글
+    @ManyToOne(fetch = FetchType.LAZY) // many = reply, one = schedule / 하나의 일정에 여러개의 댓글 fetch 찾아보기
     @JoinColumn(name="scheduleId")
     private Schedule schedule;
 
-    public Reply(String replyContent, String userName, String replyPwd) {
+    public Reply(String replyContent, String userName, String password) {
         this.replyContent = replyContent;
         this.userName = userName;
-        this.replyPwd = replyPwd;
+        this.password = password;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }
