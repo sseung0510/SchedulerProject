@@ -52,9 +52,9 @@ public class ScheduleService {
     public List<GetScheduleResponse> findAll(String userName) {
         List<Schedule> schedules;
 
-        if(userName == null) {
+        if(userName == null) { // 작성자명이 없으면 전체 조회
             schedules = scheduleRepository.findAll();
-        } else {
+        } else { // 아니면 작성자명이 동일한 일정만 조회
             schedules = scheduleRepository.findByUserName(userName);
         }
 
@@ -114,7 +114,7 @@ public class ScheduleService {
                 () ->  new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 없습니다.")
         );
 
-        if((schedule.getPassword()).equals(request.getPassword())) {
+        if((schedule.getPassword()).equals(request.getPassword())) { // 비밀번호가 일치하면 수정
             schedule.updateSchedule(request.getTitle(), request.getUserName());
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
@@ -136,8 +136,8 @@ public class ScheduleService {
         );
 
         if((schedule.getPassword()).equals(request.getPassword())) {
-            replyRepository.deleteByScheduleId(scheduleId);
-            scheduleRepository.deleteById(scheduleId);
+            replyRepository.deleteByScheduleId(scheduleId); // 일정 삭제 전 해당 일정의 id를 가지고 있는 댓글 삭제
+            scheduleRepository.deleteById(scheduleId); // 일정 삭제
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }

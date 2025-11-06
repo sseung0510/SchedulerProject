@@ -4,6 +4,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * 댓글 생성 응답 response DTO
+ */
 @Getter
 public class CreateReplyResponse {
     private final long replyId;
