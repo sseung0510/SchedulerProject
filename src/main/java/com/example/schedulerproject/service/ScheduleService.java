@@ -142,33 +142,4 @@ public class ScheduleService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
     }
-
-    // lv5 - 댓글 생성
-    @Transactional
-    public CreateReplyResponse saveReply(Long scheduleId, CreateReplyRequest request) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 없습니다.")
-        );
-
-        if(replyRepository.countByScheduleId(scheduleId) >= 10) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "댓글이 10개 이상 존재합니다.");
-        }
-
-        Reply reply = new Reply(
-                request.getReplyContent(),
-                request.getUserName(),
-                request.getPassword()
-        );
-
-        reply.setSchedule(schedule);
-
-        Reply saved = replyRepository.save(reply);
-        return new CreateReplyResponse(
-                saved.getReplyId(),
-                saved.getReplyContent(),
-                saved.getUserName(),
-                saved.getCreatedAt(),
-                saved.getModifiedAt()
-        );
-    }
 }

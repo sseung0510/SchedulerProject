@@ -56,13 +56,4 @@ public class ScheduleController {
         service.delete(scheduleId, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-    // lv5 - 댓글 생성
-    @PostMapping("/scheduler/{scheduleId}/reply")
-    public ResponseEntity<CreateReplyResponse> createReply(
-            @PathVariable Long scheduleId,
-            @Valid @RequestBody CreateReplyRequest request
-    ){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveReply(scheduleId, request));
-    }
 }
