@@ -4,6 +4,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * 다건 일정 조회 응답 response DTO
+ */
 @Getter
 public class GetScheduleResponse {
     private final Long id;

@@ -4,6 +4,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * 오류 발생 응답 response DTO
+ */
 @Getter
 public class ErrorResponse {
     private final LocalDateTime timestamp;

@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+/**
+ * 일정 수정 시 입력 request DTO
+ */
 @Getter
 public class UpdateScheduleRequest {
 
