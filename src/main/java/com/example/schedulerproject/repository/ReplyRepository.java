@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
     Long countByScheduleId(Long scheduleId);
-
     List<Reply> findByScheduleId(Long scheduleId);
+    List<Reply> deleteByScheduleId(Long scheduleId);
 }

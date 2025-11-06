@@ -6,6 +6,7 @@ import com.example.schedulerproject.dto.request.DeleteScheduleRequest;
 import com.example.schedulerproject.dto.request.UpdateScheduleRequest;
 import com.example.schedulerproject.dto.response.*;
 import com.example.schedulerproject.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class ScheduleController {
 
     // lv1 - 일정 생성
     @PostMapping("/scheduler")
-    public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
+    public ResponseEntity<CreateScheduleResponse> createSchedule(@Valid @RequestBody CreateScheduleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request));
     }
 
@@ -41,7 +42,7 @@ public class ScheduleController {
     @PutMapping("/scheduler/{scheduleId}")
     public ResponseEntity<UpdateScheduleResponse> updateSchedule(
             @PathVariable Long scheduleId,
-            @RequestBody UpdateScheduleRequest request
+            @Valid @RequestBody UpdateScheduleRequest request
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(service.update(scheduleId, request));
     }
@@ -50,7 +51,7 @@ public class ScheduleController {
     @DeleteMapping("/scheduler/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(
             @PathVariable Long scheduleId,
-            @RequestBody DeleteScheduleRequest request
+            @Valid @RequestBody DeleteScheduleRequest request
     ) {
         service.delete(scheduleId, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -60,7 +61,7 @@ public class ScheduleController {
     @PostMapping("/scheduler/{scheduleId}/reply")
     public ResponseEntity<CreateReplyResponse> createReply(
             @PathVariable Long scheduleId,
-            @RequestBody CreateReplyRequest request
+            @Valid @RequestBody CreateReplyRequest request
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.saveReply(scheduleId, request));
     }

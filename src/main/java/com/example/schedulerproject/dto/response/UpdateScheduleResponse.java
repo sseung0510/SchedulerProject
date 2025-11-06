@@ -11,7 +11,6 @@ public class UpdateScheduleResponse {
     private final String userName;
     private final LocalDateTime modifiedAt;
 
-
     public UpdateScheduleResponse(Long id, String title, String userName, LocalDateTime modifiedAt) {
         this.id = id;
         this.title = title;

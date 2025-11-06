@@ -10,7 +10,6 @@ import com.example.schedulerproject.entity.Schedule;
 import com.example.schedulerproject.repository.ReplyRepository;
 import com.example.schedulerproject.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,7 @@ public class ScheduleService {
                 request.getTitle(),
                 request.getContent(),
                 request.getUserName(),
-                request.getUserPwd()
+                request.getPassword()
         );
         Schedule saved = scheduleRepository.save(schedule);
         return new CreateScheduleResponse(
@@ -80,7 +79,7 @@ public class ScheduleService {
     public GetScheduleReplyResponse findOne(Long scheduleId) {
 
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("일정이 없습니다.")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 없습니다.")
         );
 
         List<Reply> replies = replyRepository.findByScheduleId(scheduleId);
@@ -112,11 +111,13 @@ public class ScheduleService {
     @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("일정이 없습니다.")
+                () ->  new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 없습니다.")
         );
 
-        if((schedule.getUserPwd()).equals(request.getUserPwd())) {
+        if((schedule.getPassword()).equals(request.getPassword())) {
             schedule.updateSchedule(request.getTitle(), request.getUserName());
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
 
         return new UpdateScheduleResponse(
@@ -131,11 +132,14 @@ public class ScheduleService {
     @Transactional
     public void delete(Long scheduleId, DeleteScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("일정이 없습니다.")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 없습니다.")
         );
 
-        if((schedule.getUserPwd()).equals(request.getUserPwd())) {
+        if((schedule.getPassword()).equals(request.getPassword())) {
+            replyRepository.deleteByScheduleId(scheduleId);
             scheduleRepository.deleteById(scheduleId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
     }
 
@@ -143,11 +147,11 @@ public class ScheduleService {
     @Transactional
     public CreateReplyResponse saveReply(Long scheduleId, CreateReplyRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("일정이 없습니다.")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 없습니다.")
         );
 
         if(replyRepository.countByScheduleId(scheduleId) >= 10) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "댓글이 10개 이상 존재합니다.");
         }
 
         Reply reply = new Reply(
