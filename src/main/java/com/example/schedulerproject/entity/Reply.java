@@ -24,7 +24,7 @@ public class Reply extends BaseTimeEntity {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY) // many = reply, one = schedule / 하나의 일정에 여러개의 댓글 fetch 찾아보기
+    @ManyToOne(fetch = FetchType.LAZY) // many = reply, one = schedule
     @JoinColumn(name="scheduleId")
     private Schedule schedule;
 
